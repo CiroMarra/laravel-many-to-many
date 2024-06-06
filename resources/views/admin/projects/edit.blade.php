@@ -31,6 +31,17 @@
                 @endforeach
             </select>
         <div>
+        <div>
+            <h5> Scegli la tecnologia che è stata usata per il progetto </h5>
+                 @foreach ($technologies as $technology)
+                    <div class="form-check">
+                        <input @checked(in_array($technology->id, old('technologies', []))) class="form-check-input" type="checkbox" name="technologies[]" value="{{ $technology->id }}" id="technologies-{{ $technology->id }}">
+                        <label class="form-check-label" for="technologies-{{ $technology->id }}">
+                        {{ $technology->name }}
+                        </label>
+                    </div>
+                @endforeach 
+        </div>   
 
 
         <div class="mb-3">
@@ -44,6 +55,9 @@
             @else
                 <small class="text-danger">Non c'è nessuna immagine del progetto caricata</small>
             @endif
+
+        </div>
+
 
 
 

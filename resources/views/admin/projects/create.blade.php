@@ -35,7 +35,17 @@
                 @endforeach
             </select>
         <div>
-
+            <div class="mb-3 mt-4">
+                <h5>Technologies</h5>   
+                @foreach ($technologies as $technology)
+                    <div class="form-check">
+                        <input @checked(in_array($technology->id, old('technologies', []))) class="form-check-input" type="checkbox" name="technologies[]" value="{{ $technology->id }}" id="technologies-{{ $technology->id }}">
+                        <label class="form-check-label" for="technologies-{{ $technology->id }}">
+                        {{ $technology->name }}
+                        </label>
+                    </div>
+                @endforeach
+            </div>
 
         <div class="mb-3">
             <label for="title" class="form-label">Nome Cliente</label>

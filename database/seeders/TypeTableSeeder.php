@@ -18,7 +18,6 @@ class TypeTableSeeder extends Seeder
     {
         $types = ['FrontEnd', 'Backend', 'FullStack', 'Design', 'DevOps'];
 
-        // per ogni categoria crea nuova istanza di Category, la popolo e la salvo
         foreach ($types as $typesName) {
             $newTypes = new Type();
             $newTypes->name = $typesName;

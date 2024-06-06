@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Type;
 
+
 class project extends Model
 {
     use HasFactory;
@@ -13,5 +14,9 @@ class project extends Model
     protected $fillable = ['name', 'summary', 'slug','client_name', 'cover_image', 'type_id'];
         public function type() {
             return $this->belongsTo(Type::class); 
+        }
+
+        public function technologies() {
+            return $this->belongsToMany(Technology::class);
         }
 }

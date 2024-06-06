@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Type;
+use App\Models\Technology;
 
 class ProjectControl extends Controller
 {
@@ -33,7 +34,8 @@ class ProjectControl extends Controller
     {
         {
             $types = Type::all();
-            return view('admin.projects.create', compact('types'));
+            $technologies = Technology::all();
+            return view('admin.projects.create', compact('types','technologies'));
         }
     }
 
@@ -51,7 +53,8 @@ class ProjectControl extends Controller
                  'summary' => 'min:10|max:500',
                  'client_name' => 'min:3|max:250',
                  'cover_image' => 'nullable|image|max:512',
-                 'type_id' => 'exists:types,id'
+                 'type_id' => 'exists:types,id',
+                 'technologies' => 'nullable|exists:technologies,id',
            
              ],
              [
@@ -64,7 +67,9 @@ class ProjectControl extends Controller
                 'client_name.min' => 'il nome del cliente deve avere un minimo di 3 caratteri',
                 'client_name.max' => 'il nome del cliente deve avere un massimo di 150 caratteri',
                 'cover_image' => "l' immagine caricata non deve superare il peso di 512kb ",
-                'type_id' => 'il progetto deve avere una categoria'
+                'type_id' => 'il progetto deve avere una categoria',
+                'technologies' =>'specifica che tipo di tecnologia ha il progetto.'
+                
              ]
          );
 
@@ -81,6 +86,11 @@ class ProjectControl extends Controller
         $newProject->fill($formData);
         $newProject->slug = Str::slug($newProject->name, '-');
         $newProject->save();
+
+
+        if($request->has('technologies')) {
+            $newProject->technologies()->attach($formData['technologies']);
+        }
 
         return redirect()->route('admin.projects.show', ['project' => $newProject->slug]);
 
@@ -108,8 +118,9 @@ class ProjectControl extends Controller
     public function edit(project $project)
     {
         $types = Type::all();
+        $technologies = Technology::all();
 
-        return view('admin.projects.edit', compact('project', 'types'));
+        return view('admin.projects.edit', compact('project', 'types','technologies'));
     }
 
     /**
@@ -132,7 +143,8 @@ class ProjectControl extends Controller
                     'summary' => 'min:10|max:500',
                     'client_name' => 'min:3|max:250',
                     'cover_image' => 'nullable|image|max:512',
-                    'type_id' => 'exists:types,id'
+                    'type_id' => 'exists:types,id',
+                    'technologies' => "nullable|exists:technologies,id"
                 ],
                 [
                    'name.required' => 'devi dare un nome al progetto',
@@ -144,7 +156,8 @@ class ProjectControl extends Controller
                    'client_name.min' => 'il nome del cliente deve avere un minimo di 3 caratteri',
                    'client_name.max' => 'il nome del cliente deve avere un massimo di 150 caratteri',
                    'cover_image' => "l' immagine caricata non deve superare il peso di 512kb ",
-                   'type_id' => 'il progetto deve avere una categoria'
+                   'type_id' => 'il progetto deve avere una categoria',
+                    'technologies' =>'specifica che tipo di tecnologia ha il progetto.'
                 ]
             );
 
@@ -169,6 +182,12 @@ class ProjectControl extends Controller
 
         $project->slug = Str::slug($formData['name'], '-');
         $project->update($formData);
+
+        if($request->has('technologies')) {
+            $project->technologies()->sync($formData['technologies']);
+        } else {
+            $project->technologies()->detach();
+        }
 
         return redirect()->route('admin.projects.show', ['project' => $project->slug]);
     }
